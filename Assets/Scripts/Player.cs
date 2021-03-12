@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
     private Rigidbody playerBody;
     private bool spaceIsPressed;
     private float horizontalInput;
+    private float forwardReverseInput;
     private bool canJump = true;
+
     [SerializeField] private Transform GroundCheckTransfrom;
     // Start is called before the first frame update
     void Start()
@@ -26,16 +28,20 @@ public class Player : MonoBehaviour
 
         //Get the horizontal input (from a keyboard, mouse, or joystick) for moving the player
         horizontalInput = Input.GetAxis("Horizontal");
+        forwardReverseInput = Input.GetAxis("Vertical");
+
+
     }
     // FixedUpdate is called once per physics update
     void FixedUpdate()
     {
-        int playerLeftRightSpeedMultiplier = 3;
+        int speedMultiplier = 3;
         // Check if the player is on the ground
         if (Physics.OverlapSphere(GroundCheckTransfrom.position, 0.1f).Length == 1)
         {
-            playerLeftRightSpeedMultiplier = 2;
+            speedMultiplier = 2;
             canJump = false;
+
         }
 
         else
@@ -50,13 +56,15 @@ public class Player : MonoBehaviour
             spaceIsPressed = false;
         }
 
-        //Move the player horizontally
-        GetComponent<Rigidbody>().velocity = new Vector3(horizontalInput * playerLeftRightSpeedMultiplier, playerBody.velocity.y, 0);
-
-        if (playerBody.position.y < -5){
+        //Move the player
+        playerBody.velocity = new Vector3(horizontalInput * speedMultiplier, playerBody.velocity.y, forwardReverseInput * speedMultiplier);
+        
+        if (playerBody.position.y < -5)
+        {
             transform.position = new Vector3(0, 2, 0);
         }
     }
 
 
 }
+
